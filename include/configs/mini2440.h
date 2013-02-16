@@ -283,6 +283,168 @@ Error reading env offset in OOB
 #define CONFIG_ENV_SIZE		0x4000
 #endif
 
+/******************* CONFIG_SPL_BUILD ***************************************/
+#if 1
+#define CONFIG_SPL
+#endif
+
+/*
+ * Final target image containing SPL and payload.  Some SPLs
+ * use an arch-specific makefile fragment instead, for
+ * example if more than one image needs to be produced.
+ */
+#if 0
+#define CONFIG_SPL_TARGET
+#endif
+
+/*
+ * Enable the SPL framework under common/.  This framework
+ * supports MMC, NAND and YMODEM loading of U-Boot and NAND
+ * NAND loading of the Linux Kernel.
+ */
+#define CONFIG_SPL_FRAMEWORK
+
+/*
+ * CONFIG_SPL_NAND_SIMPLE: 
+ * Active le driver drivers/mtd/nand/nand_spl_simple.c
+ * Celui-ci peut être suffisant pour booter
+ * 
+ * Support for NAND boot using simple NAND drivers that
+ * expose the cmd_ctrl() interface.
+ * 
+ */
+#if 1
+#define CONFIG_SPL_NAND_SIMPLE
+#endif
+
+/*
+ * Include standard software ECC in the SPL
+ */
+#if 0
+#define CONFIG_SPL_NAND_ECC
+#endif
+
+/*
+ * Include nand_base.c in the SPL.  Requires
+ * CONFIG_SPL_NAND_DRIVERS.
+ */
+#define CONFIG_SPL_NAND_BASE
+
+#if 1
+#define CONFIG_SPL_NAND_DRIVERS
+#endif
+
+/*
+ * CONFIG_SPL_NAND_LOAD (drivers/mtd/nand/nand_spl_load.o)
+ */
+#if 1
+#define CONFIG_SPL_NAND_LOAD
+#endif
+
+/*
+ * CONFIG_SPL_NAND_SUPPORT (drivers/mtd/nand/libnand.o)
+ */
+#define CONFIG_SPL_NAND_SUPPORT
+
+/* Adress of the start of the stack SPL will use */
+#define CONFIG_SPL_STACK 		0xF00
+
+/* TEXT_BASE for linking the SPL binary. */
+
+#define CONFIG_SPL_TEXT_BASE		0x0
+
+/* Maximum binary size (text, data and rodata) of the SPL binary. */
+#define CONFIG_SPL_MAX_SIZE		(4 * 1024)	/* 4 KB for stack */
+
+/*
+ * CONFIG_SPL_SERIAL_SUPPORT (drivers/serial/libserial.o)
+ * define serial_putc */
+#if 1
+#define CONFIG_SPL_SERIAL_SUPPORT
+#endif
+
+#if 0
+/* Support for drivers/mtd/spi/libspi_flash.o in SPL binary */
+#define CONFIG_SPL_SPI_FLASH_SUPPORT
+#endif
+
+/* essayer de ce passer de ces options pour diminuer la taille de u-boot-spl.bin */
+/* memset, memcpy */
+#define CONFIG_SPL_LIBGENERIC_SUPPORT
+
+#if 0
+/* function like memset, memcpy, printf are undef */
+/* printf puts... */
+#define CONFIG_SPL_LIBCOMMON_SUPPORT
+#endif
+
+#if 0
+/* "It's not always fitting to use CPU's start.S" --Marek Vasut */
+#define CONFIG_SPL_START_S_PATH		"arch/arm/cpu/arm920t/s3c24x0"
+#endif
+
+#ifdef CONFIG_SPL
+/* K9F1G08U0B */
+/* NAND chip page size		*/
+#define CONFIG_SYS_NAND_PAGE_SIZE	2048
+/* NAND chip block size		*/
+#define CONFIG_SYS_NAND_BLOCK_SIZE	(128 * 1024) /* (128k + 4k) Byte */
+/* NAND chip page per block count  */
+#define CONFIG_SYS_NAND_PAGE_COUNT	64
+/* Location of the bad-block label */
+#define CONFIG_SYS_NAND_BAD_BLOCK_POS	0	/* ??  CHECK IT */
+/* Extra address cycle for A25 */
+/* #define CONFIG_SYS_NAND_5_ADDR_CYCLE */
+#endif
+
+/* On gagne de la place 3696 => 3520 => 3512 */ 
+#if !CONFIG_SPL_BUILD
+/* Use NAND BBT */
+#define CONFIG_S3C2440_NAND_BBT
+#endif
+
+/* Size of the block protected by one OOB (Spare Area in Samsung terminology) */
+/* Il y a 512 octets pour proteger un block */
+#define CONFIG_SYS_NAND_ECCSIZE		CONFIG_SYS_NAND_PAGE_SIZE	/* OK */
+/* Number of ECC bytes per OOB - S3C2440 calculates 3 bytes ECC */
+/* four ECC (Error Correction Code) modules ?? */
+#define CONFIG_SYS_NAND_ECCBYTES	3	/* CHECK IT */
+/* Size of a single OOB region */
+#define CONFIG_SYS_NAND_OOBSIZE		16	/* OK */
+/* ECC byte positions */
+#define CONFIG_SYS_NAND_ECCPOS		{0, 1, 2}	/* CHECK IT */
+/* linux/drivers/mtd/nand/s3c2410.c
+ * new oob placement block for use with hardware ecc generation
+ * static struct nand_ecclayout nand_hw_eccoob = {
+ *	.eccbytes = 3,
+ *	.eccpos = {0, 1, 2},
+ *	.oobfree = {{8, 8}}
+ * };
+ */
+
+/* Exemple d'utilisation de ces définitions
+ * drivers/mtd/nand/nand_spl_simple.c
+ * static int nand_ecc_pos[] = CONFIG_SYS_NAND_ECCPOS;
+ * 	u_char oob_data[CONFIG_SYS_NAND_OOBSIZE];
+ * #define ECCSTEPS	(CONFIG_SYS_NAND_PAGE_SIZE / CONFIG_SYS_NAND_ECCSIZE) == 1
+ * #define ECCTOTAL	(ECCSTEPS * CONFIG_SYS_NAND_ECCBYTES) == 3
+ * 
+ *	Pick the ECC bytes out of the oob data
+ *	for (i = 0; i < ECCTOTAL; i++)
+ *		ecc_code[i] = oob_data[nand_ecc_pos[i]];
+ */
+
+/* Location in NAND to read U-Boot from */
+#define CONFIG_SYS_NAND_U_BOOT_OFFS	(4 * 1024)	/* Offset to RAM U-Boot image */
+/* Location in memory to load U-Boot to */
+#define CONFIG_SYS_NAND_U_BOOT_DST	0x33F80000	/* NUB load-addr      */
+/* Entry point in loaded image to jump to */
+#define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_NAND_U_BOOT_DST	/* NUB start-addr     */
+/* size of u-boot, for NAND loading */
+#define CONFIG_SYS_NAND_U_BOOT_SIZE	(256 * 1024)	/* Size of RAM U-Boot image   */
+
+/******************* END CONFIG_SPL_BUILD ************************************/
+
 /* ATAG configuration */
 #define CONFIG_INITRD_TAG
 #define CONFIG_SETUP_MEMORY_TAGS

@@ -40,6 +40,14 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#ifdef CONFIG_SPL_BUILD
+
+/* in the early stage of NAND flash booting, printf() is not available */
+#define printf(fmt, args...)
+#define panic(fmt, ...){ while(1); }
+
+#endif
+
 #ifdef CONFIG_USE_IRQ
 int interrupt_init (void)
 {
