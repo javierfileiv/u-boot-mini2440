@@ -208,6 +208,55 @@
 #define CONFIG_S3C2440_NAND_HWECC		/* this works for generation, not verification */
 #endif
 
+/******************* SELECT NAND or NOR BOOT ************************************/
+
+/*
+ * It is possible to have u-boot save it's environment in NOR, however,
+ * reember it is incompatible with booting from NAND as the NOR is not
+ * available at that point. So use this only if you use nand as storage
+ * and will never boot from it
+ */
+/* #define CONFIG_MINI2440_NOR_ENV */
+
+/*
+ * u-boot environmnet
+ */
+#ifndef CONFIG_MINI2440_NOR_ENV
+/* Declare no flash (NOR/SPI), SW2 must select NAND */
+/* #define CONFIG_SYS_NO_FLASH */
+
+/* dont define for CONFIG_ENV_IS_IN_FLASH */
+/* Define this if you have a NAND device which you want to use for the environment. */
+#define CONFIG_ENV_IS_IN_NAND
+/* This size must be the size of a common denominator for the NAND erase block */
+#define CONFIG_ENV_SIZE		0x20000		/* 128k Total Size of Environment Sector */
+
+/*
+ * Enables support for dynamically retrieving the offset of the
+ * environment from block zero's out-of-band data.  The
+ * "nand env.oob" command can be used to record this offset.
+ * Currently, CONFIG_ENV_OFFSET_REDUND is not supported when
+ * using CONFIG_ENV_OFFSET_OOB.
+*/
+/*#define CONFIG_ENV_OFFSET_OOB 
+ TODO: à retester, entre temps le driver nand a été fixé.
+No dynamic environment marker in OOB block 0
+Error reading env offset in OOB
+ */
+
+/* addr of environment */
+#ifndef CONFIG_ENV_OFFSET_OOB
+#define CONFIG_ENV_OFFSET	(0x40000)
+#endif
+
+#define MTDIDS_DEFAULT		"nand0=mini2440-nand"
+
+/* We can't access NOR flash when SW2 in on NAND position */
+#define CONFIG_SYS_NO_FLASH
+/* must be undef since NOR FLASH is not selected */
+#undef CONFIG_CMD_IMLS
+
+#else
 /*
  * NOR FLASH organization
  * Now uses the standard CFI interface
@@ -232,6 +281,7 @@
 #define CONFIG_ENV_ADDR		(CONFIG_SYS_FLASH_BASE + CONFIG_MY_ENV_OFFSET)
 /* 16k Total Size of Environment Sector */
 #define CONFIG_ENV_SIZE		0x4000
+#endif
 
 /* ATAG configuration */
 #define CONFIG_INITRD_TAG
