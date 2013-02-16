@@ -29,6 +29,7 @@ COBJS-$(CONFIG_USE_IRQ) += interrupts.o
 COBJS-$(CONFIG_DISPLAY_CPUINFO)	+= cpu_info.o
 COBJS-y	+= speed.o
 COBJS-y	+= timer.o
+COBJS-y += soc.o
 
 SRCS	:= $(SOBJS:.o=.S) $(COBJS-y:.o=.c)
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS-y))
