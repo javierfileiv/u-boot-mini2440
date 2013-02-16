@@ -111,6 +111,10 @@
 #define CONFIG_CMD_PORTIO
 #define CONFIG_CMD_REGINFO
 #define CONFIG_CMD_SAVES
+#define CONFIG_CMD_SAVEENV
+#define CONFIG_CMD_MEMINFO
+#define CONFIG_CMD_MTDPARTS
+#define CONFIG_MTD_DEVICE
 
 /*
  * Miscellaneous configurable options
