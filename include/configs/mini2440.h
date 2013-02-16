@@ -35,6 +35,9 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+/* Enable debug */
+#define DEBUG
+
 /*
  u-boot.mini2440
  SMDK2440 has 1 bank of 64 MB DRAM
