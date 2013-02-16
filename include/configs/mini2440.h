@@ -172,6 +172,43 @@
 #define CONFIG_SYS_INIT_SP_ADDR		(0x40001000 - GENERATED_GBL_DATA_SIZE)
 
 /*
+ * Config for NAND flash
+ */
+#define CONFIG_CMD_NAND
+#define CONFIG_SYS_MAX_NAND_DEVICE	1	/* Max number of NAND */
+#define NAND_MAX_CHIPS			1
+
+/* nand (un)lock commands	?? */
+#if 0
+#define CONFIG_CMD_NAND_LOCK_UNLOCK
+#endif
+
+/*
+ * Two NAND Model can be on the board
+ * nand_id == 0xec76  Samsung K91208  
+ * nand_id == 0xad76  Hynix HY27US08121A 
+ */
+/* Select driver s3c2440_nand.c */
+#define CONFIG_NAND_S3C2440
+/* physical address to access nand (@NAND FLASH CONFIGURATION REGISTER) */
+#define CONFIG_SYS_NAND_BASE		0x4E000000 /* S3C2440_NAND_BASE (nGCS0)*/
+/* Use NAND BBT */
+#define CONFIG_S3C2440_NAND_BBT
+
+/* Timing used in u-boot 1.3.2 mini2440 */
+#if 1
+#define CONFIG_S3C24XX_CUSTOM_NAND_TIMING
+#define CONFIG_S3C24XX_TACLS	8
+#define CONFIG_S3C24XX_TWRPH0	8
+#define CONFIG_S3C24XX_TWRPH1	8
+#endif
+
+#if 0
+/* S3C2440_NAND_HWECC seems to be broken in u-boot */
+#define CONFIG_S3C2440_NAND_HWECC		/* this works for generation, not verification */
+#endif
+
+/*
  * NOR FLASH organization
  * Now uses the standard CFI interface
  * FLASH and environment organization
