@@ -290,4 +290,31 @@ Error reading env offset in OOB
 #define CONFIG_CMDLINE_EDITING
 #define CONFIG_AUTO_COMPLETE
 
+#define CONFIG_BOOTDELAY	3
+#define CONFIG_BOOTARGS    	"root=/dev/mtdblock3 rootfstype=jffs2 console=ttySAC0,115200"
+#define CONFIG_ETHADDR	        08:08:11:18:12:27
+#define CONFIG_NETMASK         255.255.255.0
+#define CONFIG_IPADDR		10.0.0.111
+#define CONFIG_SERVERIP		10.0.0.4
+
+#define CONFIG_BOOTCOMMAND	""
+
+#define CONFIG_EXTRA_ENV_SETTINGS	\
+	"usbtty=cdc_acm\0" \
+	"mtdparts=mtdparts=mini2440-nand:256k@0(u-boot),128k(env),5m(kernel),-(root)\0" \
+	"mini2440=mini2440=3tb\0" \
+	"bootargs_base=console=ttySAC0,115200 noinitrd\0" \
+	"bootargs_init=init=/sbin/init\0" \
+	"root_nand=root=/dev/mtdblock3 rootfstype=jffs2\0" \
+	"root_mmc=root=/dev/mmcblk0p2 rootdelay=2\0" \
+	"root_nfs=/mnt/nfs\0" \
+	"set_root_nfs=setenv root_nfs root=/dev/nfs rw nfsroot=${serverip}:${root_nfs}\0" \
+	"ifconfig_static=run setenv ifconfig ip=${ipaddr}:${serverip}::${netmask}:mini2440:eth0\0" \
+	"ifconfig_dhcp=run setenv ifconfig ip=dhcp\0" \
+	"ifconfig=ip=dhcp\0" \
+	"set_bootargs_mmc=setenv bootargs ${bootargs_base} ${bootargs_init} ${mini2440} ${root_mmc}\0" \
+	"set_bootargs_nand=setenv bootargs ${bootargs_base} ${bootargs_init} ${mini2440} ${root_nand}\0" \
+	"set_bootargs_nfs=run set_root_nfs\; setenv bootargs ${bootargs_base} ${bootargs_init} ${mini2440} ${root_nfs} ${ifconfig}\0" \
+	""
+
 #endif	/* __CONFIG_H */
